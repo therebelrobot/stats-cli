@@ -1,5 +1,5 @@
 # stats-cli
-A command line utility to send data events into a datadog agent. Powered by [dog-statsy](https://github.com/segmentio/dog-statsy)
+A command line utility to send data events into datadog
 
 ## installation
 
