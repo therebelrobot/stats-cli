@@ -13,19 +13,17 @@ npm install -g @therebel/stats-cli
 $ stats --help                                                                          
 Commands:
   gauge      Send gauge value
-  meter      Send meter value
-  set        Send set value
   count      Send count value
-  incr       Increment by val or 1
-  decr       Decrement by val or 1
+  increment  Increment by val or 1
   histogram  Send histogram value
 
 Options:
   --help         Show help                                             [boolean]
   --version      Show version number                                   [boolean]
-  -a, --agent    the datadog agent url                                [required]
+  -h, --host     the hostname reported with each metric               [required]
   -s, --service  the name of the service, normalized                  [required]
   -e, --env      the name of the environment                          [required]
+  -k, --key      your datadog api key
   --verbose, -V                                                 [default: false]
 ```
 

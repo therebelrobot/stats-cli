@@ -2,6 +2,7 @@
 
 const yargs = require('yargs')
 const Stats = require('datadog-metrics')
+const { isArray } = require('lodash')
 
 const verbose = { alias: 'V', default: false }
 const required = [ 'host', 'service', 'env' ]
@@ -55,7 +56,10 @@ for (let command of commands) {
     if (action === 'count') action = 'increment'
     const params = [argv.metric]
     if (argv.value && command.name !== 'increment') params.push(argv.value)
-    if (argv.tag && action !== 'increment') params.push(argv.tag)
+    if (argv.tag && action !== 'increment') {
+      if (!isArray(argv.tag)) argv.tag = [argv.tag]
+      params.push(argv.tag)
+    }
     stats[action].apply(stats, params)
     stats.flush((results) => {
       console.log(results)
