@@ -1,0 +1,34 @@
+{
+  "name": "@therebel/stats-cli",
+  "version": "1.0.0",
+  "description": "A command line utility to send data events into a datadog agent. Powered by dog-statsy",
+  "main": "stats.js",
+  "bin": {
+    "stats": "stats.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/therebelrobot/stats-cli.git"
+  },
+  "keywords": [
+    "datadog",
+    "stats",
+    "cli",
+    "command",
+    "line",
+    "terminal"
+  ],
+  "author": "Oz Haven <ozzyhaven@therebelrobot.com> (@therebelrobot)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/therebelrobot/stats-cli/issues"
+  },
+  "homepage": "https://github.com/therebelrobot/stats-cli#readme",
+  "dependencies": {
+    "dog-statsy": "^1.1.1",
+    "yargs": "^9.0.1"
+  }
+}
