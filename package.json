@@ -1,7 +1,7 @@
 {
   "name": "@therebel/stats-cli",
-  "version": "1.0.0",
-  "description": "A command line utility to send data events into a datadog agent. Powered by dog-statsy",
+  "version": "1.0.1",
+  "description": "A command line utility to send metrics into the datadog API",
   "main": "stats.js",
   "bin": {
     "stats": "stats.js"
@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/therebelrobot/stats-cli#readme",
   "dependencies": {
-    "dog-statsy": "^1.1.1",
+    "datadog-metrics": "^0.6.0",
     "yargs": "^9.0.1"
   }
 }

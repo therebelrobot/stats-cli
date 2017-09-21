@@ -1,24 +1,14 @@
 #!/usr/bin/env node
 
 const yargs = require('yargs')
-const Stats = require('dog-statsy')
+const Stats = require('datadog-metrics')
 
 const verbose = { alias: 'V', default: false }
-const required = [ 'agent', 'service', 'env' ]
+const required = [ 'host', 'service', 'env' ]
 const commands = [
   {
     name: 'gauge',
     description: 'Send gauge value',
-    required: [ 'metric', 'value' ]
-  },
-  {
-    name: 'meter',
-    description: 'Send meter value',
-    required: [ 'metric', 'value' ]
-  },
-  {
-    name: 'set',
-    description: 'Send set value',
     required: [ 'metric', 'value' ]
   },
   {
@@ -27,13 +17,8 @@ const commands = [
     required: [ 'metric', 'value' ]
   },
   {
-    name: 'incr',
+    name: 'increment',
     description: 'Increment by val or 1',
-    required: [ 'metric' ]
-  },
-  {
-    name: 'decr',
-    description: 'Decrement by val or 1',
     required: [ 'metric' ]
   },
   {
@@ -57,37 +42,44 @@ for (let command of commands) {
     .demandOption(command.required, `Please provide the ${command.required.join(' and ')} argument${command.required.length > 1 ? 's' : ''} to work with this command`)
   }, (argv) => {
     const log = argv.verbose ? console.log : () => {}
-    log(`sending ${command.name} for ${argv.service} in ${argv.env} to ${argv.agent}...`)
-    const [ddHost, ddPort] = (argv.agent).split(':');
-    const stats = new Stats({
-      host: ddHost,
-      port: ddPort,
-      prefix: argv.service,
-      tags: [`env:${argv.env}`],
-    });
+    log(`sending ${command.name} for ${argv.service} in ${argv.env} from ${argv.host}...`)
+    const apiKey = argv.key || process.env.DATADOG_API_KEY
+    const stats = new Stats.BufferedMetricsLogger({
+      apiKey,
+      host: argv.host,
+      prefix: `${argv.service}.`,
+      flushIntervalSeconds: 0,
+      defaultTags: [`env:${argv.env}`]
+    })
+    const action = command.name
+    if (action === 'count') action = 'increment'
     const params = [argv.metric]
-    if (argv.value) params.push(argv.value)
-    if (argv.tag) params.push(argv.tag)
-    try {
-      stats[command.name].apply(stats, params)
-    } catch(e) {
+    if (argv.value && command.name !== 'increment') params.push(argv.value)
+    if (argv.tag && action !== 'increment') params.push(argv.tag)
+    stats[action].apply(stats, params)
+    stats.flush((results) => {
+      console.log(results)
+      log(`completed sending ${command.name} for ${argv.service} in ${argv.env} from ${argv.host}.`)
+      process.exit()
+    }, (error) => {
       console.log('an error occured')
-      console.log(e)
+      console.log(error)
       process.exit(1)
-    }
-    log(`completed sending ${command.name} for ${argv.service} in ${argv.env} to ${argv.agent}.`)
-    process.exit()
+    })
   })
 }
 yargs.option('agent')
-.alias('a', 'agent')
-.describe('a', 'the datadog agent url')
+.alias('h', 'host')
+.describe('h', 'the hostname reported with each metric')
 .option('service')
 .alias('s', 'service')
 .describe('s', 'the name of the service, normalized')
 .option('env')
 .alias('e', 'env')
 .describe('e', 'the name of the environment')
+.option('key')
+.alias('k', 'key')
+.describe('k', 'your datadog api key')
 .demandOption(required, `Please provide the ${required.join(' and ')} arguments to work with this command`)
 .option('verbose', verbose)
 .argv
