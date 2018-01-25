@@ -44,7 +44,6 @@ for (let command of commands) {
   }, (argv) => {
     const log = argv.verbose ? console.log : () => null
     log(`sending ${command.name} for ${argv.service} in ${argv.env} from ${argv.host}...`)
-    log('arguments:', argv)
     const apiKey = argv.key || process.env.DATADOG_API_KEY
     const stats = new Stats.BufferedMetricsLogger({
       apiKey,
