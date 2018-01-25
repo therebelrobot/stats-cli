@@ -1,6 +1,6 @@
 {
   "name": "@therebel/stats-cli",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A command line utility to send metrics into the datadog API",
   "main": "stats.js",
   "bin": {
