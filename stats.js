@@ -42,8 +42,9 @@ for (let command of commands) {
     .describe('t', 'tag to list with it, multiples allowed')
     .demandOption(command.required, `Please provide the ${command.required.join(' and ')} argument${command.required.length > 1 ? 's' : ''} to work with this command`)
   }, (argv) => {
-    const log = argv.verbose ? console.log : () => {}
+    const log = argv.verbose ? console.log : () => null
     log(`sending ${command.name} for ${argv.service} in ${argv.env} from ${argv.host}...`)
+    log('arguments:', argv)
     const apiKey = argv.key || process.env.DATADOG_API_KEY
     const stats = new Stats.BufferedMetricsLogger({
       apiKey,
@@ -61,8 +62,7 @@ for (let command of commands) {
       params.push(argv.tag)
     }
     stats[action].apply(stats, params)
-    stats.flush((results) => {
-      console.log(results)
+    stats.flush((results, ...args) => {
       log(`completed sending ${command.name} for ${argv.service} in ${argv.env} from ${argv.host}.`)
       process.exit()
     }, (error) => {
